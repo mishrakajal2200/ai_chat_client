@@ -5,7 +5,7 @@ import Peer from "peerjs";
 
 const socket = io("https://ai-chat-app-ev4d.onrender.com");
 
-const VideoCall = () => {
+const Videocall = () => {
   const myVideo = useRef();
   const userVideo = useRef();
   const peerInstance = useRef();
@@ -86,4 +86,4 @@ const VideoCall = () => {
   );
 };
 
-export default VideoCall;
+export default Videocall;
