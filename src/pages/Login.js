@@ -19,7 +19,7 @@ const Login = () => {
     setButtonText("Logging in....");
 
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/login", {
+      const response = await axios.post("https://ai-chat-app-ev4d.onrender.com/api/auth/login", {
         email,
         password,
       });

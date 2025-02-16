@@ -4,7 +4,7 @@ import { io } from "socket.io-client";
 import { Link, useNavigate } from "react-router-dom";
 import { FaPaperPlane, FaVideo } from "react-icons/fa";
 
-const socket = io("http://localhost:5000");
+const socket = io("https://ai-chat-app-ev4d.onrender.com");
 
 const Chat = () => {
   const [message, setMessage] = useState("");
@@ -33,7 +33,7 @@ const Chat = () => {
     setMessages((prev) => [...prev, { text: message, sender: "You" }]);
 
     try {
-      const response = await fetch("http://localhost:5000/api/ai/chat", {
+      const response = await fetch("https://ai-chat-app-ev4d.onrender.com/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message }),

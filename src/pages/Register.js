@@ -20,7 +20,7 @@ const Register = () => {
     setButtonText("Creating Account... Please Wait");
 
     try {
-      const response = await axios.post("http://localhost:5000/api/auth/register", {
+      const response = await axios.post("https://ai-chat-app-ev4d.onrender.com/api/auth/register", {
         userName,
         email,
         password,

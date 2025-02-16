@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from "react";
 import { io } from "socket.io-client";
 import Peer from "peerjs";
 
-const socket = io("http://localhost:5000");
+const socket = io("https://ai-chat-app-ev4d.onrender.com");
 
 const VideoCall = () => {
   const myVideo = useRef();
