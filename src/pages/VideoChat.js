@@ -203,7 +203,7 @@ import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import axios from "axios";
 
-const socket = io("http://localhost:5000");
+const socket = io("https://ai-chat-app-1-d9nn.onrender.com");
 
 const VideoChat = () => {
     const { roomId } = useParams();
@@ -225,7 +225,7 @@ const VideoChat = () => {
                 const token = localStorage.getItem("token");
                 if (!token) throw new Error("No token found!");
 
-                const response = await axios.get("http://localhost:5000/api/user", {
+                const response = await axios.get("https://ai-chat-app-1-d9nn.onrender.com/api/user", {
                     headers: { Authorization: `Bearer ${token}` },
                 });
 
@@ -261,7 +261,7 @@ const VideoChat = () => {
 
     useEffect(() => {
         if (peerId && userId) {
-            axios.post("http://localhost:5000/api/update-peer", { userId, peerId })
+            axios.post("https://ai-chat-app-1-d9nn.onrender.com/api/update-peer", { userId, peerId })
                 .then(() => console.log("✅ Peer ID updated in DB!"))
                 .catch(err => console.error("❌ Error updating Peer ID:", err));
         }
@@ -274,7 +274,7 @@ const VideoChat = () => {
         }
 
         try {
-            const response = await axios.get(`http://localhost:5000/api/get-peer/${brotherUsername}`);
+            const response = await axios.get(`https://ai-chat-app-1-d9nn.onrender.com/api/get-peer/${brotherUsername}`);
             const brotherPeerId = response.data.peerId;
             if (!brotherPeerId) {
                 return console.error("❌ Brother is offline or has no active Peer ID.");
