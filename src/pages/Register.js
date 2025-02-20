@@ -1,81 +1,151 @@
 
 import { useState } from "react";
-import axios from "axios";
-import { Link, useNavigate } from "react-router-dom";
+import axios from 'axios';
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import { Link,useNavigate } from "react-router-dom";
 
 const Register = () => {
-  const [userName, setUserName] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [buttonText, setButtonText] = useState("Sign Up");
-  const [isSigningUp, setIsSigningUp] = useState(false);
   const navigate = useNavigate();
+  const [formData, setFormData] = useState({
+    username: "",
+    email: "",
+    password: "",
+    interests: [],
+    interestInput: "", // Temporary input field for adding interests
+    peerId:""
+  });
 
-  const handleSignup = async (e) => {
-    e.preventDefault();
+  const handleChange = (e) => {
+    setFormData({ ...formData, [e.target.name]: e.target.value });
+  };
 
-    if (isSigningUp) return; // Prevent multiple clicks
+  const handleInterestChange = (e) => {
+    setFormData({ ...formData, interestInput: e.target.value });
+  };
 
-    setIsSigningUp(true);
-    setButtonText("Creating Account... Please Wait");
-
-    try {
-      const response = await axios.post("https://ai-chat-app-ev4d.onrender.com/api/auth/register", {
-        userName,
-        email,
-        password,
-      });
-      alert(response.data.message);
-      navigate("/"); // Redirect to login after signup
-    } catch (error) {
-      alert("Registration failed"); // Or a more specific error message
-    } finally {
-      setIsSigningUp(false);
-      setButtonText("Sign Up");
+  const addInterest = () => {
+    if (
+      formData.interestInput &&
+      !formData.interests.includes(formData.interestInput)
+    ) {
+      setFormData((prev) => ({
+        ...prev,
+        interests: [...prev.interests, prev.interestInput],
+        interestInput: "", // Clear input field
+      }));
     }
   };
 
+  const removeInterest = (interest) => {
+    setFormData((prev) => ({
+      ...prev,
+      interests: prev.interests.filter((i) => i !== interest),
+    }));
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+  
+    try {
+      const response = await axios.post("http://localhost:5000/api/auth/register", {
+        username: formData.username,
+        email: formData.email,
+        password: formData.password,
+        interests: formData.interests, // Send interests array
+        peerId:formData.peerId
+      });
+  
+      console.log("Response:", response.data);
+      toast.success("Signup successful!", { position: "top-right" });
+
+      // Save username and interests to localStorage
+    localStorage.setItem("username", formData.username);
+    localStorage.setItem("interests", JSON.stringify(formData.interests));
+
+      navigate('/chat');
+    } catch (error) {
+      console.error("Error:", error.response?.data || error.message);
+
+      toast.error("Signup failed! " + (error.response?.data?.message || "Try again."), {
+        position: "top-right",
+      });
+    }
+  };
   return (
-    <div className="flex justify-center items-center h-screen bg-gray-200">
-      <form className="bg-white p-6 rounded-lg shadow-md w-96" onSubmit={handleSignup}>
-        <h2 className="text-2xl font-bold mb-4 text-center">Signup</h2>
-        {/* ... (Your input fields) */}
+    <div className="max-w-md mx-auto mt-10 p-6 bg-white shadow-lg rounded-lg">
+      <h2 className="text-2xl font-bold mb-4 text-center">Sign Up</h2>
+      <ToastContainer/>
+      <form onSubmit={handleSubmit} className="space-y-4">
         <input
           type="text"
+          name="username"
           placeholder="Username"
-          className="w-full p-2 mb-3 border rounded"
-          value={userName}
-          onChange={(e) => setUserName(e.target.value)}
+          value={formData.username}
+          onChange={handleChange}
+          className="w-full p-2 border rounded-lg"
           required
         />
         <input
           type="email"
+          name="email"
           placeholder="Email"
-          className="w-full p-2 mb-3 border rounded"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
+          value={formData.email}
+          onChange={handleChange}
+          className="w-full p-2 border rounded-lg"
           required
         />
         <input
           type="password"
+          name="password"
           placeholder="Password"
-          className="w-full p-2 mb-3 border rounded"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
+          value={formData.password}
+          onChange={handleChange}
+          className="w-full p-2 border rounded-lg"
           required
         />
 
+        {/* Interests Input Field */}
+        <div>
+          <p className="font-medium">Enter Interests:</p>
+          <div className="flex gap-2 mt-2">
+            <input
+              type="text"
+              value={formData.interestInput}
+              onChange={handleInterestChange}
+              className="w-full p-2 border rounded-lg"
+              placeholder="Type an interest and press Add"
+            />
+            <button
+              type="button"
+              onClick={addInterest}
+              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+            >
+              Add
+            </button>
+          </div>
+
+          {/* Display Added Interests */}
+          <div className="mt-3 flex flex-wrap gap-2">
+            {formData.interests.map((interest, index) => (
+              <span
+                key={index}
+                className="bg-gray-200 px-3 py-1 rounded-full text-sm cursor-pointer"
+                onClick={() => removeInterest(interest)}
+              >
+                {interest} ❌
+              </span>
+            ))}
+          </div>
+        </div>
+
         <button
           type="submit"
-          className="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-600"
-          disabled={isSigningUp} // Disable the button while signing up
+          className="w-full bg-green-600 text-white p-2 rounded-lg hover:bg-green-700 transition"
         >
-          {buttonText} {/* Dynamic button text */}
+          Sign Up
         </button>
-        <p>
-          Already Have An Account?
-          <Link to="/">Login</Link>
-        </p>
+        <p>Already Have An Account? <Link to='/'>Login</Link></p>
       </form>
     </div>
   );
