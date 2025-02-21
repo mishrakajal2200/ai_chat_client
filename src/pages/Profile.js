@@ -6,7 +6,7 @@ const Profile = () => {
   useEffect(() => {
     const fetchUserData = async () => {
       try {
-        const response = await fetch('http://localhost:5000/api/users/me'); // Replace with your API endpoint
+        const response = await fetch('https://ai-chat-app-1-d9nn.onrender.com/api/users/me'); // Replace with your API endpoint
         const data = await response.json();
         setUser(data);
       } catch (error) {
