@@ -4,7 +4,10 @@ import { useParams } from "react-router-dom";
 import { io } from "socket.io-client";
 import axios from "axios";
 
-const socket = io("https://ai-chat-app-1-d9nn.onrender.com");
+const socket = io("https://ai-chat-app-1-d9nn.onrender.com", {
+    transports: ["websocket", "polling"],
+  });
+  
 
 const VideoChat = () => {
     const { roomId } = useParams();
@@ -130,7 +133,7 @@ const VideoChat = () => {
                 }
             });
     
-            // Send user's stream back to the caller
+            // Handle call end
             incomingCall.on("close", () => {
                 stream.getTracks().forEach(track => track.stop());
                 setCallActive(false);
@@ -143,6 +146,22 @@ const VideoChat = () => {
             console.error("Error answering call:", error);
         }
     };
+    
+    // Function to reject the incoming call
+    const rejectCall = () => {
+        if (!incomingCall) return;
+    
+        incomingCall.close(); // End the call
+        setIncomingCall(null); // Reset the incoming call state
+    
+        // Optionally notify the caller if using WebRTC or Socket.io
+        if (socket) {
+            socket.emit("callRejected");
+        }
+    
+        console.log("Call rejected");
+    };
+
     
 
     const endCall = () => {
@@ -211,13 +230,25 @@ const VideoChat = () => {
 
             {/* Incoming Call Notification */}
             {incomingCall && (
-                <div className="mt-4 p-4 bg-yellow-500 text-black rounded-lg">
-                    <p>📞 Incoming call...</p>
-                    <button onClick={answerCall} className="bg-green-500 text-white px-4 py-2 rounded-md mt-2">
-                        Accept
-                    </button>
-                </div>
-            )}
+    <div className="mt-4 p-4 bg-yellow-500 text-black rounded-lg">
+        <p>📞 Incoming call...</p>
+        <div className="flex gap-4 mt-2">
+            <button 
+                onClick={answerCall} 
+                className="bg-green-500 text-white px-4 py-2 rounded-md"
+            >
+                ✅ Accept
+            </button>
+            <button 
+                onClick={rejectCall} 
+                className="bg-red-500 text-white px-4 py-2 rounded-md"
+            >
+                ❌ Reject
+            </button>
+        </div>
+    </div>
+)}
+
         </div>
     );
 };
