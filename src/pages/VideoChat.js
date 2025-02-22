@@ -70,6 +70,11 @@ const VideoChat = () => {
 
     const getUserMediaStream = async () => {
         try {
+            // Stop previous tracks if any exist
+            if (streamRef.current) {
+                streamRef.current.getTracks().forEach(track => track.stop());
+            }
+    
             const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
             streamRef.current = stream;
             if (myVideo.current) myVideo.current.srcObject = stream;
@@ -78,6 +83,7 @@ const VideoChat = () => {
             console.error("Error accessing camera/microphone:", error);
         }
     };
+    
 
     const callUser = async () => {
         if (!brotherUsername) {
