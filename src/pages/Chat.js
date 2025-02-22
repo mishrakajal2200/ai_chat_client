@@ -4,7 +4,7 @@ import { io } from "socket.io-client";
 import { Link, useNavigate } from "react-router-dom";
 import { FaPaperPlane, FaVideo, FaBars } from "react-icons/fa";
 
-const socket = io("https://ai-chat-app-1-d9nn.onrender.com");
+const socket = io("https://ai-chat-app-2-eah1.onrender.com");
 
 const Chat = () => {
   const [message, setMessage] = useState("");
@@ -24,7 +24,7 @@ const Chat = () => {
 
     const fetchMatches = async () => {
       try {
-        const response = await fetch(`https://ai-chat-app-1-d9nn.onrender.com/api/ai/match/${userId}`);
+        const response = await fetch(`https://ai-chat-app-2-eah1.onrender.com/api/ai/match/${userId}`);
         const data = await response.json();
         setMatchedUsers(Array.isArray(data.matchedUsers) ? data.matchedUsers : []);
       } catch (error) {
@@ -54,7 +54,7 @@ const Chat = () => {
     setMessages((prev) => [...prev, { text: message, sender: "You" }]);
 
     try {
-      const response = await fetch("https://ai-chat-app-1-d9nn.onrender.com/api/ai/chat", {
+      const response = await fetch("https://ai-chat-app-2-eah1.onrender.com/api/ai/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message }),
@@ -79,7 +79,7 @@ const Chat = () => {
     }
 
     try {
-        const response = await fetch("https://ai-chat-app-1-d9nn.onrender.com/api/ai/video-call", {
+        const response = await fetch("https://ai-chat-app-2-eah1.onrender.com/api/ai/video-call", {
             method: "POST",
             headers: { "Content-Type": "application/json" },
             body: JSON.stringify({ sender: userId, receiver: receiverId }),
