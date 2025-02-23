@@ -75,16 +75,34 @@ const VideoChat = () => {
                 streamRef.current.getTracks().forEach(track => track.stop());
             }
     
+            // First request (immediately stops tracks)
+            await navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+                .then((stream) => {
+                    let tracks = stream.getTracks();
+                    tracks.forEach(track => track.stop());
+                });
+    
+            // Second request (new stream after cleanup)
             const stream = await navigator.mediaDevices.getUserMedia({ video: true, audio: true });
             streamRef.current = stream;
             if (myVideo.current) myVideo.current.srcObject = stream;
             return stream;
         } catch (error) {
             console.error("Error accessing camera/microphone:", error);
+    
+            // Handle specific error cases
+            if (error.name === 'NotAllowedError') {
+                alert("Camera and/or microphone access was denied by your browser/system. Please allow access.");
+            } else if (error.name === 'NotFoundError') {
+                alert("No camera or microphone found. Please connect a device.");
+            } else if (error.name === 'NotReadableError') {
+                alert("Camera or microphone is being used by another application. Please close any other apps using them.");
+            } else {
+                alert("An error occurred while accessing the camera or microphone. Please try again.");
+            }
         }
     };
     
-
     const callUser = async () => {
         if (!brotherUsername) {
             return console.error("Please enter a username before calling.");
